@@ -1,6 +1,6 @@
 import logging
 
-from typing import Optional
+from typing import Optional, List, Tuple
 import csv
 from datetime import datetime, timedelta
 
@@ -11,7 +11,7 @@ def _append_ids_to_csv(outfile: str, ids):
     """Append a list of match ids to a .csv file at a specified relative path."""
     with open(outfile, "a", newline="") as csvfile:
         csvwriter = csv.writer(csvfile)
-        csvwriter.writerows([[id] for id in ids])
+        csvwriter.writerows(ids)
 
 
 def get_ids(
@@ -21,7 +21,7 @@ def get_ids(
     end: datetime,
     time_resolution: Optional[timedelta] = timedelta(days=1),
     outfile: Optional[str] = None,
-):
+) -> List[Tuple[str, float]]:
     """
     Get the ballchasing ids for matches with specified parameters and timeframe, and optionally
     store them in a .csv file.
@@ -44,6 +44,7 @@ def get_ids(
         ResponseOverflowError: When the query returns too many results due to an insufficient time
         resolution.
     """
+
     # Type checking
     if not isinstance(api_key, str):
         raise TypeError("API key must be of type string")
@@ -127,9 +128,9 @@ def get_ids(
                     "data not present for all matches in range, a higher resolution is required"
                 )
             else:
-
                 for match in data["list"]:
-                    match_ids.append(match["id"])
+                    created_dt = datetime.strptime(match["created"], "%Y-%m-%dT%H:%M:%S.%fZ")
+                    match_ids.append((match["id"], round(created_dt.timestamp(), 1)))
 
         all_match_ids += match_ids
 
