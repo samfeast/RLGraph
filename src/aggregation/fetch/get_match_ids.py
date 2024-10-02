@@ -86,10 +86,10 @@ def get_ids(
         start += time_resolution
 
     if len(start_times) <= 100:
-        logging.info(f"{len(start_times)} API calls required")
+        logging.info(f"at least{len(start_times)} API calls required")
     else:
         logging.warning(
-            f"{len(start_times)} API calls required - consider using a lower resolution"
+            f"at least {len(start_times)} API calls required - consider using a lower resolution"
         )
 
     # Create an instance of ballchasing_api with the API key, and calculate the required sleep time
