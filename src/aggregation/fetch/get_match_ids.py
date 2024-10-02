@@ -37,7 +37,7 @@ def get_ids(
         stored. Defaults to None.
 
     Returns:
-        list: A list of match ids fulfilling the arguments.
+        list: A list of match ids fulfilling the parameters.
 
     Raises:
         TypeError: When an argument is invalid.

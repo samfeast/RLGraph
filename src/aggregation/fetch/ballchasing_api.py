@@ -117,9 +117,10 @@ class API:
 
                 time.sleep(sleep_time)
 
+                # Calculate the backoff time using exponential backoff
                 backoff_time = 0.5 * 2 ** (self._consecutive_failed_requets - 1)
                 time.sleep(backoff_time)
-                # Retry the request after applying exponential backoff
+                # Retry the request after waiting
                 self.call(url, sleep_time)
         else:
             logging.critical(f"call to {url} returned {r.status_code}, failing")
@@ -138,7 +139,9 @@ class API:
             float: The number of seconds to sleep to abide by the rate limit.
 
         Raises:
-            URLError: If the URL provided does not use a supported endpoint."""
+            URLError: If the URL provided does not use a supported endpoint.
+
+        """
 
         # Check if the url uses one of the supported endpoints
         # NOTE: This relies on the order of the RATE_LIMITS dictionary
@@ -150,7 +153,9 @@ class API:
 
         # Raise a URLError if the url does not use a supported endpoint
         if not valid_endpoint:
-            raise URLError("url is not valid (only /replays and /replays/{id} are supported)")
+            raise URLError(
+                "url is not valid (only /replays and /replays/{id} endpoints are supported)"
+            )
 
         # Get either a float or dictionary corresponding to the endpoint and patron tier
         rate_limit = RATE_LIMITS[endpoint][self.patron_type]
